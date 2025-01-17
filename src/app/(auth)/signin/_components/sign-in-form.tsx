@@ -10,7 +10,7 @@ export function SignInForm() {
         <div className="flexjustify-center"></div>
         <div>
           <button
-            className="hover:text-green-five inline-flex w-full cursor-pointer items-center justify-center rounded-md p-4 text-xl font-bold"
+            className="inline-flex w-full cursor-pointer items-center justify-center rounded-md p-4 text-xl font-bold hover:text-green-five"
             onClick={() =>
               void signIn("github", {
                 callbackUrl: "/",

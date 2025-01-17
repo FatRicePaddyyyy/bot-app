@@ -5,20 +5,14 @@ import { Todo } from "./todo";
 import { ProgressBar } from "./progress-bar";
 
 export function Todos() {
-  const { data: todos, isLoading, isError } = api.todo.all.useQuery();
+  
+  // データを新しく取得する場合
+  // const [todos] = api.todo.all.useQuery();
 
-  if (isLoading)
-    return (
-      <div className="flex items-center justify-center">
-        <div
-          style={{ borderTopColor: "transparent" }}
-          className="border-blue-200 mt-32 h-10 w-10 animate-spin rounded-full border-4"
-        />
-        <p className="ml-4 mt-32 text-xl">loading...</p>
-      </div>
-    );
+  // データをキャッシュから取得する場合
+  const [todos] = api.todo.all.useSuspenseQuery();
 
-  if (isError || !todos)
+  if (!todos)
     return (
       <div className="flex items-center justify-center">
         <p className="ml-4 mt-10 text-xl">Error fetching todos</p>

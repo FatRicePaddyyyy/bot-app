@@ -13,95 +13,97 @@ export function Todo({ todo }: TodoProps) {
   const [currentTodo, setCurrentTodo] = useState(text);
 
   const utils = api.useUtils();
- 
+
   const { mutate: toggleMutation } = api.todo.toggle.useMutation({
     onMutate: async ({ id, is_completed }) => {
-        await utils.todo.all.cancel();
-        const previousTodos = utils.todo.all.getData();
-        utils.todo.all.setData(undefined, (prev) => {
-          if (!prev) return previousTodos;
-          return prev.map((t) => {
-            if (t.id === id) {
-              return {
-                ...t,
-                isCompleted: is_completed,
-              };
-            }
-            return t;
-          });
+      await utils.todo.all.cancel();
+      const previousTodos = utils.todo.all.getData();
+      utils.todo.all.setData(undefined, (prev) => {
+        if (!prev) return previousTodos;
+        return prev.map((t) => {
+          if (t.id === id) {
+            return {
+              ...t,
+              isCompleted: is_completed,
+            };
+          }
+          return t;
         });
-        return { previousTodos };
-      },
-      onSuccess: ({ isCompleted }) => {
-        if (isCompleted) {
-          toast.success("Todo completed 🎉");
-        }
-      },
-      onError: (err, is_completed, context) => {
-        toast.error(
-          `An error occured when marking todo as ${
-            is_completed ? "completed" : "uncompleted"
-          }`,
-        );
-        console.error(err);
-        if (!context) return;
-        utils.todo.all.setData(undefined, () => context.previousTodos);
-      },
+      });
+      return { previousTodos };
+    },
+    onSuccess: ({ isCompleted }) => {
+      if (isCompleted) {
+        toast.success("Todo completed 🎉");
+      }
+    },
+    onError: (err, is_completed, context) => {
+      toast.error(
+        `An error occured when marking todo as ${
+          is_completed ? "completed" : "uncompleted"
+        }`,
+      );
+      console.error(err);
+      if (!context) return;
+      utils.todo.all.setData(undefined, () => context.previousTodos);
+    },
     onSettled: async () => {
       await utils.todo.all.invalidate();
     },
   });
- 
+
   const { mutate: deleteMutation } = api.todo.delete.useMutation({
     onMutate: async (deleteId) => {
-        await utils.todo.all.cancel();
-        const previousTodos = utils.todo.all.getData();
-        utils.todo.all.setData(undefined, (prev) => {
-          if (!prev) return previousTodos;
-          return prev.filter((t) => t.id !== deleteId);
-        });
-        return { previousTodos };
-      },
-      onError: (err, _, context) => {
-        toast.error("An error occurred when deleting todo");
-        console.error(err);
-        if (!context) return;
-        utils.todo.all.setData(undefined, () => context.previousTodos);
-      },
+      await utils.todo.all.cancel();
+      const previousTodos = utils.todo.all.getData();
+      utils.todo.all.setData(undefined, (prev) => {
+        if (!prev) return previousTodos;
+        return prev.filter((t) => t.id !== deleteId);
+      });
+      return { previousTodos };
+    },
+    onError: (err, _, context) => {
+      toast.error("An error occurred when deleting todo");
+      console.error(err);
+      if (!context) return;
+      utils.todo.all.setData(undefined, () => context.previousTodos);
+    },
     onSettled: async () => {
       await utils.todo.all.invalidate();
     },
   });
- 
+
   const { mutate: updateMutation } = api.todo.update.useMutation({
     onMutate: async ({ id, text: currentTodo }) => {
-        await utils.todo.all.cancel();
-        const previousTodos = utils.todo.all.getData();
-        utils.todo.all.setData(undefined, (prev) => {
-          if (!prev) return previousTodos;
-          return prev.map((t) => {
-            if (t.id === id) {
-              return {
-                ...t,
-                text: currentTodo,
-              };
-            }
-            return t;
-          });
+      await utils.todo.all.cancel();
+      const previousTodos = utils.todo.all.getData();
+      utils.todo.all.setData(undefined, (prev) => {
+        if (!prev) return previousTodos;
+        return prev.map((t) => {
+          if (t.id === id) {
+            return {
+              ...t,
+              text: currentTodo,
+            };
+          }
+          return t;
         });
-        setCurrentTodo(currentTodo);
-        return { previousTodos };
-      },
-      onError: (err, _, context) => {
-        toast.error("An error occured when editing todo");
-        console.error(err);
-        if (!context) return;
-        const previousText = context?.previousTodos?.find((t) => t.id === id)?.text;
-        if (previousText) {
-          setCurrentTodo(previousText);
-        }
-        utils.todo.all.setData(undefined, () => context.previousTodos);
-      },
+      });
+      setCurrentTodo(currentTodo);
+      return { previousTodos };
+    },
+    onError: (err, _, context) => {
+      toast.error("An error occured when editing todo");
+      console.error(err);
+      if (!context) return;
+      const previousText = context?.previousTodos?.find(
+        (t) => t.id === id,
+      )?.text;
+      if (previousText) {
+        setCurrentTodo(previousText);
+      }
+      utils.todo.all.setData(undefined, () => context.previousTodos);
+    },
     onSettled: async () => {
       await utils.todo.all.invalidate();
     },
@@ -121,7 +123,7 @@ export function Todo({ todo }: TodoProps) {
           }}
         />
         <input
-          className="ml-5 flex-1 text-ellipsis rounded-none border-x-0 border-t-0 border-b border-dashed border-b-gray-two bg-cream-four px-0 pb-1 text-base font-normal text-gray-three placeholder:text-gray-two focus:border-gray-three focus:outline-none focus:ring-0"
+          className="ml-5 flex-1 text-ellipsis rounded-none border-x-0 border-b border-t-0 border-dashed border-b-gray-two bg-cream-four px-0 pb-1 text-base font-normal text-gray-three placeholder:text-gray-two focus:border-gray-three focus:outline-none focus:ring-0"
           id={`${todo.id}-text`}
           type="text"
           placeholder="Enter a todo"
@@ -136,7 +138,7 @@ export function Todo({ todo }: TodoProps) {
         <span
           className={`${
             isCompleted ? "bg-green-three" : "bg-leaf-one"
-          } ml-5 hidden rounded-full  py-0.5 px-2 text-sm font-normal text-gray-five md:block`}
+          } ml-5 hidden rounded-full px-2 py-0.5 text-sm font-normal text-gray-five md:block`}
         >
           {isCompleted ? "Complete" : "In Progress"}
         </span>
@@ -171,4 +173,4 @@ export function Todo({ todo }: TodoProps) {
       </button>
     </div>
   );
- }
+}
