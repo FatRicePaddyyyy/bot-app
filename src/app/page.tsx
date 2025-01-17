@@ -3,6 +3,8 @@ import Image from "next/image";
 import { auth } from "~/server/auth";
 import { SignInButton } from "./_components/sign-in-button";
 import { SignOutButton } from "./_components/sign-out-button";
+import { CreateTodo } from "./_components/create-todo";
+import { Todos } from "./_components/todos";
 
 export const metadata: Metadata = {
   title: "ToDo アプリ",
@@ -26,7 +28,10 @@ export default async function Home() {
               </p>
               <SignOutButton />
             </div>
-            <div>Todo components coming soon...</div>
+            <div>
+              <CreateTodo />
+              <Todos />
+            </div>
           </>
         ) : (
           <div className="flex flex-col items-center">
