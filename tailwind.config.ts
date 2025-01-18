@@ -39,6 +39,7 @@ export default {
       leaf: {
         one: "#E0E7A1",
       },
+      "red-custom": "#ff0000",
     },
     extend: {
       fontFamily: {

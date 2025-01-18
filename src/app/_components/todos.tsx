@@ -5,7 +5,6 @@ import { Todo } from "./todo";
 import { ProgressBar } from "./progress-bar";
 
 export function Todos() {
-  
   // データを新しく取得する場合
   // const [todos] = api.todo.all.useQuery();
 

@@ -8,12 +8,12 @@ import type { Todo } from "~/server/types";
 
 export function CreateTodo() {
   const [newTodo, setNewTodo] = useState("");
-
   const utils = api.useUtils();
   const { mutate } = api.todo.create.useMutation({
     onMutate: async (newTodo) => {
       await utils.todo.all.cancel();
-      const previousTodos = utils.todo.all.getData();
+      const previousTodos = utils.todo.all.getData(); // キャッシュから取ってくる．
+      //const { data: todos, isLoading } = api.todo.all.useQuery(); // 実際に，データベースから取ってくる
       utils.todo.all.setData(undefined, (prev) => {
         const optimisticTodo: Todo = {
           id: "optimistic-todo-id",

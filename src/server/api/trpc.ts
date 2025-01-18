@@ -50,7 +50,7 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   return result;
 });
 
-export const publicProcedure = t.procedure//.use(timingMiddleware);
+export const publicProcedure = t.procedure; //.use(timingMiddleware);
 
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
