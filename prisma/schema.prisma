@@ -15,16 +15,6 @@ datasource db {
     directUrl = env("DIRECT_URL")
 }
 
-model Todo {
-    id          String   @id @default(cuid())
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    text        String
-    isCompleted Boolean  @default(false)
-    user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId      String
-}
-
 // Necessary for Next auth
 model Account {
     id                       String  @id @default(cuid())
@@ -53,6 +43,105 @@ model Session {
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Prompt {
+    id          Int       @id @default(autoincrement())
+    title       String
+    content     String
+    isTemplate  Boolean?  @default(false)
+    isFavorite  Boolean?  @default(false)
+    createdAt   DateTime  @default(now())
+    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId      String
+    tasks       Task[]
+    categories  PromptCategory[]
+}
+
+model Category {
+    id          Int       @id @default(autoincrement())
+    name        String
+    createdAt   DateTime  @default(now())
+    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId      String
+    prompts     PromptCategory[]
+}
+
+model PromptCategory {
+    id          Int       @id @default(autoincrement())
+    createdAt   DateTime  @default(now())
+    prompt      Prompt    @relation(fields: [promptId], references: [id])
+    promptId    Int
+    category    Category  @relation(fields: [categoryId], references: [id])
+    categoryId  Int
+
+    @@unique([promptId, categoryId])
+}
+
+model TwitterAccount {
+    id                      Int       @id @default(autoincrement())
+    name                    String
+    twitterHandle           String
+    twitterApiKey          String?
+    twitterApiSecretKey    String?
+    twitterAccessToken     String?
+    twitterAccessTokenSecret String?
+    createdAt              DateTime  @default(now())
+    user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId                  String
+    tasks                   Task[]
+    twitterPosts           TwitterPost[]
+}
+
+model Task {
+    id                Int       @id @default(autoincrement())
+    taskType         String
+    isActive         Boolean   @default(true)
+    isDraft          Boolean   @default(false)
+    isDeleted        Boolean?  @default(false)
+    cronSchedule     String?
+    compiledPrompt   String?
+    editedContent    String?
+    aiProvider       String?
+    lastExecutedAt   DateTime?
+    nextExecutionAt  DateTime?
+    createdAt        DateTime  @default(now())
+    prompt           Prompt    @relation(fields: [promptId], references: [id])
+    promptId         Int
+    twitterAccount   TwitterAccount @relation(fields: [twitterAccountId], references: [id])
+    twitterAccountId Int
+    twitterPosts     TwitterPost[]
+    taskImages       TaskImage[]
+}
+
+model TwitterPost {
+    id                Int       @id @default(autoincrement())
+    tweetContent      String
+    errorCode        Int?
+    errorMessage     String?
+    postedAt         DateTime?
+    createdAt        DateTime  @default(now())
+    task             Task      @relation(fields: [taskId], references: [id])
+    taskId           Int
+    twitterAccount   TwitterAccount @relation(fields: [twitterAccountId], references: [id])
+    twitterAccountId Int
+}
+
+model TaskImage {
+    id          Int       @id @default(autoincrement())
+    filePath    String
+    createdAt   DateTime  @default(now())
+    task        Task      @relation(fields: [taskId], references: [id])
+    taskId      Int
+}
+
+model Setting {
+    id          Int       @id @default(autoincrement())
+    key         String?
+    value       String?
+    createdAt   DateTime  @default(now())
+    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId      String
+}
+
 model User {
     id            String    @id @default(cuid())
     name          String?
@@ -61,7 +150,10 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
-    todos         Todo[]
+    prompts       Prompt[]
+    categories    Category[]
+    settings      Setting[]
+    twitterAccounts TwitterAccount[]
 }
 
 model VerificationToken {

@@ -1,26 +1,28 @@
-import type { Metadata } from "next";
+"use client";
+
 import Image from "next/image";
-import { SignInForm } from "./_components/sign-in-form";
 
-export const metadata: Metadata = {
-  title: "ログイン",
-  description: "アカウントにログイン",
-};
+import LoginForm from "../_components/login-form";
 
-export default function Page() {
+export default function LoginPage() {
   return (
-    <>
-      <div className="min-h-screen bg-olive-one p-0 selection:bg-green-two md:px-8 md:py-24">
-        <div className="flex flex-col items-center space-y-20 pt-40">
-          <Image
-            src="/images/github-icon.png"
-            width={170}
-            height={170}
-            alt="github-icon"
-          />
-          <SignInForm />
+    <div className="grid min-h-svh lg:grid-cols-2">
+      <div className="flex flex-col p-6 md:p-10">
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-xs">
+            <LoginForm />
+          </div>
         </div>
       </div>
-    </>
+
+      <div className="relative hidden bg-muted lg:block">
+        <Image
+          src="/images/twitter-bot.webp"
+          alt="Image"
+          fill
+          className="object-cover dark:brightness-[0.2] dark:grayscale"
+        />
+      </div>
+    </div>
   );
 }

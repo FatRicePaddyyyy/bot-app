@@ -36,7 +36,16 @@ const config = {
           "attributes": false
         }
       }
-    ]
-  }
+    ],
+    "func-style": ["error", "declaration", { "allowArrowFunctions": true }]
+  },
+  "overrides": [
+    {
+      "files": ["tailwind.config.ts"],
+      "rules": {
+        "@typescript-eslint/no-require-imports": "off"
+      }
+    }
+  ]
 }
 module.exports = config;

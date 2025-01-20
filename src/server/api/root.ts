@@ -1,4 +1,4 @@
-import { todoRouter } from "~/server/api/routers/todo";
+import { twitterAccountRouter } from "~/server/api/routers/twitter-account";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -7,7 +7,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  todo: todoRouter,
+  twitterAccount: twitterAccountRouter,
 });
 
 // export type definition of API
