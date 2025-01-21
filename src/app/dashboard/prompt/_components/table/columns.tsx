@@ -1,0 +1,167 @@
+"use client";
+
+import { type ColumnDef } from "@tanstack/react-table";
+import { FileText } from "lucide-react";
+import { toast } from "react-hot-toast";
+
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { type Prompt } from "~/server/types";
+import { api } from "~/trpc/react";
+import { DataTableColumnHeader } from "./data-table-column-header";
+
+export const columns: ColumnDef<Prompt>[] = [
+  {
+    accessorKey: "title",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Title" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="flex max-w-[500px] items-center gap-1 truncate font-medium">
+            <span className="w-4 flex-shrink-0">
+              {row.original.isTemplate && (
+                <FileText className="h-4 w-4 text-blue-500" />
+              )}
+            </span>
+            {row.getValue("title")}
+          </span>
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      const searchValue = String(value).toLowerCase();
+      const titleMatch = String(row.getValue("title"))
+        .toLowerCase()
+        .includes(searchValue);
+      const contentMatch = String(row.getValue("content"))
+        .toLowerCase()
+        .includes(searchValue);
+      return titleMatch || contentMatch;
+    },
+    enableSorting: false,
+  },
+  {
+    accessorKey: "content",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="content" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="max-w-[800px] truncate font-medium">
+            {row.getValue("content")}
+          </span>
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      const searchValue = String(value).toLowerCase();
+      const titleMatch = String(row.getValue("title"))
+        .toLowerCase()
+        .includes(searchValue);
+      const contentMatch = String(row.getValue("content"))
+        .toLowerCase()
+        .includes(searchValue);
+      return titleMatch || contentMatch;
+    },
+  },
+  {
+    accessorKey: "categories",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="categories" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="max-w-[800px] truncate font-medium">
+            {(
+              row.getValue("categories") satisfies {
+                category: { name: string; id: number };
+              }[]
+            ).map(({ category: { name, id } }) => (
+              <Badge variant="outline" key={id}>
+                {name}
+              </Badge>
+            ))}
+          </span>
+        </div>
+      );
+    },
+    filterFn: (row, id, value: number[]) => {
+      const promptCategories = row.getValue("categories") satisfies {
+        category: { name: string; id: number };
+      }[];
+      const isInclude = value.every((id) =>
+        promptCategories.some(
+          ({ category: { id: categoryId } }) => categoryId === id,
+        ),
+      );
+      return isInclude;
+    },
+    enableSorting: false,
+  },
+  {
+    accessorKey: "isFavorite",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Favorite" />
+    ),
+    cell: ({ row }) => {
+      const isFavorite = row.getValue("isFavorite");
+      const utils = api.useUtils();
+      const { mutate: isFavoriteMutation } =
+        api.prompt.updateIsFavorite.useMutation({
+          onMutate: async ({ id, isFavorite }) => {
+            await utils.prompt.all.cancel();
+            const previousPrompts = utils.prompt.all.getData();
+            utils.prompt.all.setData(undefined, (prev) => {
+              if (!prev) return previousPrompts;
+              return prev.map((p) => {
+                if (p.id === id) {
+                  return {
+                    ...p,
+                    isFavorite: isFavorite,
+                  };
+                }
+                return p;
+              });
+            });
+            return { previousPrompts };
+          },
+          onError: (err, isFavorite, context) => {
+            toast.error(
+              `An error occured when marking prompt as ${
+                isFavorite ? "favorite" : "unfavorite"
+              }`,
+            );
+            console.error(err);
+            if (!context) return;
+            utils.prompt.all.setData(undefined, () => context.previousPrompts);
+          },
+          onSuccess: async () => {
+            await utils.prompt.all.invalidate();
+          },
+        });
+
+      return (
+        <Button
+          variant="ghost"
+          onClick={() =>
+            isFavoriteMutation({ id: row.original.id, isFavorite: !isFavorite })
+          }
+        >
+          {isFavorite ? (
+            <span className="text-yellow-400">★</span>
+          ) : (
+            <span className="text-black">☆</span>
+          )}
+        </Button>
+      );
+    },
+    filterFn: (row, id, value: Prompt["isFavorite"]) => {
+      return value === row.getValue(id);
+    },
+    enableSorting: false,
+  },
+];
