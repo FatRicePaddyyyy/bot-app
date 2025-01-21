@@ -1,4 +1,11 @@
+import type { inferRouterOutputs } from "@trpc/server";
 import { z } from "zod";
+
+import type { AppRouter } from "~/server/api/root";
+
+type RouterOutput = inferRouterOutputs<AppRouter>;
+type allPromptOutput = RouterOutput["prompt"]["all"];
+export type Prompt = allPromptOutput[number];
 
 export const createTwitterAccountInput = z.object({
   name: z
@@ -25,4 +32,9 @@ export const createTwitterAccountInput = z.object({
     .string()
     .min(1, "Twitter access token secret must be at least 1 letter")
     .max(50, "Twitter access token secret must be 50 letters or less"),
+});
+
+export const updateIsFavoriteInput = z.object({
+  id: z.number(),
+  isFavorite: z.boolean(),
 });

@@ -1,3 +1,5 @@
+import { categoryRouter } from "~/server/api/routers/category";
+import { promptRouter } from "~/server/api/routers/prompt";
 import { twitterAccountRouter } from "~/server/api/routers/twitter-account";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
@@ -8,6 +10,8 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
  */
 export const appRouter = createTRPCRouter({
   twitterAccount: twitterAccountRouter,
+  prompt: promptRouter,
+  category: categoryRouter,
 });
 
 // export type definition of API
