@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { AppSidebar } from "~/components/app-sidebar";
+import { AppSidebar } from "~/components/sidebar";
 import { Separator } from "~/components/ui/separator";
 import {
   SidebarInset,

@@ -6,9 +6,9 @@ import { X } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { api } from "~/trpc/react";
-import { DataTableClickFilter } from "./data-table-click-filter";
-import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import { DataTableViewOptions } from "./data-table-view-options";
+import { DataTableFacetedFilter } from "./index.data-table.toolbar.";
+import { DataTableClickFilter } from "./index.data-table.toolbar.click-filter";
+import { DataTableViewOptions } from "./index.data-table.toolbar.view-options";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;

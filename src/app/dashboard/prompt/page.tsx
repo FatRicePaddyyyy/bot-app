@@ -1,20 +1,10 @@
-import { Suspense } from "react";
-import { type Metadata } from "next";
-
 import { api, HydrateClient } from "~/trpc/server";
-import CreatePromptButton from "./_components/prompt-form/create-prompt-button";
-import { DataTable } from "./_components/table/data-table";
-import { DataTableSkeleton } from "./_components/table/data-table-skeleton";
+import CreatePromptButton from "./_components/prompt-form-button";
+import PromptTable from "./_components/prompt-table";
 
-export const metadata: Metadata = {
-  title: "Tasks",
-  description: "A task and issue tracker build using Tanstack Table.",
-};
-
-export default async function TaskPage() {
+export default async function PromptPage() {
   void api.prompt.all.prefetch();
   void api.category.all.prefetch();
-  // デバッグ用
   return (
     <>
       <HydrateClient>
@@ -22,9 +12,7 @@ export default async function TaskPage() {
           <div className="mb-4 flex justify-end">
             <CreatePromptButton />
           </div>
-          <Suspense fallback={<DataTableSkeleton />}>
-            <DataTable />
-          </Suspense>
+          <PromptTable />
         </div>
       </HydrateClient>
     </>

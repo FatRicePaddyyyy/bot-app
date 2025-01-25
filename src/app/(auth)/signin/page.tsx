@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 
-import LoginForm from "../_components/login-form";
+import LoginForm from "../_login-form";
 
 export default function LoginPage() {
   return (
