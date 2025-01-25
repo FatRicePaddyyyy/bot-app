@@ -113,9 +113,11 @@ function CommandAddItem({
 export const CategoriesFormItem = ({
   promptForm,
   initialAllCategories,
+  isOpen,
 }: {
   promptForm: UseFormReturn<z.infer<typeof promptCreationSchema>>;
   initialAllCategories: Category[];
+  isOpen: boolean;
 }) => {
   const [inputValue, setInputValue] = React.useState("");
   const [allSortedCategories, setSortedAllCategories] =
@@ -129,7 +131,7 @@ export const CategoriesFormItem = ({
         <FormItem>
           <FormLabel>カテゴリー</FormLabel>
           <div className="space-y-4">
-            <Popover modal={true}>
+            <Popover modal={isOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"

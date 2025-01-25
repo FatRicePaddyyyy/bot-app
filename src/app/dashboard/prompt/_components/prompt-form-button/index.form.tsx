@@ -16,10 +16,12 @@ import { TitleFormItem } from "./index.form.title";
 
 export default function PromptForm({
   initialPrompt,
-  onCloseAction,
+  onClose,
+  isOpen,
 }: {
   initialPrompt: z.infer<typeof promptCreationSchema> | undefined;
-  onCloseAction: () => void;
+  onClose: () => void;
+  isOpen: boolean;
 }) {
   const [allCategories] = api.category.all.useSuspenseQuery();
   const utils = api.useUtils();
@@ -42,15 +44,15 @@ export default function PromptForm({
       // 楽観的更新のために必要な形式に変換
       const optimisticPrompt = {
         ...newPrompt,
-        id: -Date.now(), // タイムスタンプを整数として使用（ミリ秒単位）
+        id: -Date.now(),
         createdAt: new Date(),
         userId: "",
         isFavorite: null,
         isTemplate: newPrompt.isTemplate ?? false,
         categories: newPrompt.categories.map((categoryId) => ({
-          id: Date.now(), // タイムスタンプを整数として使用（ミリ秒単位）
+          id: Date.now(),
           createdAt: new Date(),
-          promptId: Date.now(), // タイムスタンプを整数として使用（ミリ秒単位）
+          promptId: Date.now(),
           categoryId,
           category: {
             id: categoryId,
@@ -64,19 +66,19 @@ export default function PromptForm({
         return [optimisticPrompt, ...prev];
       });
 
+      onClose(); // 楽観的更新の直後にダイアログを閉じる
       return { previousPrompts };
     },
     onError: (err, newPrompt, context) => {
       utils.prompt.all.setData(undefined, context?.previousPrompts);
     },
-    onSettled: () => {
-      void utils.prompt.all.invalidate();
+    onSuccess: async () => {
+      await utils.prompt.all.invalidate();
     },
   });
 
   const onSubmit = (prompt: z.infer<typeof promptCreationSchema>) => {
     mutate(prompt);
-    onCloseAction();
   };
 
   return (
@@ -89,11 +91,12 @@ export default function PromptForm({
             <CategoriesFormItem
               promptForm={promptForm}
               initialAllCategories={allCategories}
+              isOpen={isOpen}
             />
             <IsTemplateFormItem promptForm={promptForm} />
           </div>
           <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={onCloseAction}>
+            <Button type="button" variant="outline" onClick={onClose}>
               キャンセル
             </Button>
             <Button type="submit">作成</Button>
