@@ -91,9 +91,14 @@ model TwitterAccount {
     twitterPosts           TwitterPost[]
 }
 
+enum TaskType {
+    TWEET
+    SCHEDULE
+}
+
 model Task {
     id                Int       @id @default(autoincrement())
-    taskType         String
+    taskType         TaskType 
     isActive         Boolean   @default(true)
     isDraft          Boolean   @default(false)
     isDeleted        Boolean?  @default(false)
@@ -119,8 +124,8 @@ model TwitterPost {
     errorMessage     String?
     postedAt         DateTime?
     createdAt        DateTime  @default(now())
-    task             Task      @relation(fields: [taskId], references: [id])
-    taskId           Int
+    task             Task?     @relation(fields: [taskId], references: [id])
+    taskId           Int?
     twitterAccount   TwitterAccount @relation(fields: [twitterAccountId], references: [id])
     twitterAccountId Int
 }

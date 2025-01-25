@@ -4,8 +4,12 @@ import { z } from "zod";
 import type { AppRouter } from "~/server/api/root";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
+
 type allPromptOutput = RouterOutput["prompt"]["all"];
 export type Prompt = allPromptOutput[number];
+
+type allCategoryOutput = RouterOutput["category"]["all"];
+export type Category = allCategoryOutput[number];
 
 export const createTwitterAccountInput = z.object({
   name: z
@@ -37,4 +41,28 @@ export const createTwitterAccountInput = z.object({
 export const updateIsFavoriteInput = z.object({
   id: z.number(),
   isFavorite: z.boolean(),
+});
+
+export const promptCreationSchema = z.object({
+  title: z
+    .string()
+    .min(1, "タイトルは1文字以上必要です")
+    .max(100, "タイトルは100文字以内にしてください"),
+  content: z
+    .string()
+    .min(1, "プロンプト内容は1文字以上必要です")
+    .max(1000, "プロンプト内容は1000文字以内にしてください"),
+  categories: z.number().array(),
+  isTemplate: z.boolean().default(false),
+});
+
+export const categoryCreationSchema = z.object({
+  name: z
+    .string()
+    .min(1, "カテゴリー名は1文字以上必要です")
+    .max(50, "カテゴリー名は50文字以内にしてください"),
+});
+
+export const deletePromptInput = z.object({
+  id: z.number(),
 });

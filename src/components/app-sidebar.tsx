@@ -23,7 +23,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "~/components/ui/sidebar";
-import { cn } from "~/lib/utils";
 import { Button } from "./ui/button";
 
 // This is sample data.
@@ -75,7 +74,7 @@ const data = {
   projects: [
     {
       name: "単発ツイートの作成",
-      url: "#",
+      url: "/dashboard/tweet",
       icon: Frame,
     },
     {
@@ -85,7 +84,7 @@ const data = {
     },
     {
       name: "プロンプトの管理",
-      url: "#",
+      url: "/dashboard/prompt",
       icon: Map,
     },
     {

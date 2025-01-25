@@ -1,7 +1,7 @@
 "use client";
 
 import { type ColumnDef } from "@tanstack/react-table";
-import { FileText } from "lucide-react";
+import { FileText, Trash2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 import { Badge } from "~/components/ui/badge";
@@ -142,20 +142,78 @@ export const columns: ColumnDef<Prompt>[] = [
           onSuccess: async () => {
             await utils.prompt.all.invalidate();
           },
+          onSettled: () => {
+            void utils.prompt.all.invalidate();
+          },
         });
 
       return (
         <Button
           variant="ghost"
-          onClick={() =>
-            isFavoriteMutation({ id: row.original.id, isFavorite: !isFavorite })
-          }
+          onClick={() => {
+            if (row.original.id > 0) {
+              isFavoriteMutation({
+                id: row.original.id,
+                isFavorite: !isFavorite,
+              });
+            }
+          }}
         >
           {isFavorite ? (
             <span className="text-yellow-400">★</span>
           ) : (
             <span className="text-black">☆</span>
           )}
+        </Button>
+      );
+    },
+    filterFn: (row, id, value: Prompt["isFavorite"]) => {
+      return value === row.getValue(id);
+    },
+    enableSorting: false,
+  },
+  {
+    accessorKey: "delete",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Delete" />
+    ),
+    cell: ({ row }) => {
+      const utils = api.useUtils();
+      const { mutate: deleteMutation } = api.prompt.delete.useMutation({
+        onMutate: async ({ id }) => {
+          await utils.prompt.all.cancel();
+          const previousPrompts = utils.prompt.all.getData();
+          utils.prompt.all.setData(undefined, (prev) => {
+            if (!prev) return previousPrompts;
+            return prev.filter((p) => p.id !== id);
+          });
+          return { previousPrompts };
+        },
+        onError: (err, id, context) => {
+          toast.error(`An error occured when deleting prompt`);
+          console.error(err);
+          if (!context) return;
+          utils.prompt.all.setData(undefined, () => context.previousPrompts);
+        },
+        onSuccess: async () => {
+          await utils.prompt.all.invalidate();
+        },
+        onSettled: () => {
+          void utils.prompt.all.invalidate();
+        },
+      });
+
+      return (
+        <Button
+          variant="destructive"
+          onClick={() => {
+            if (row.original.id > 0) {
+              deleteMutation({ id: row.original.id });
+            }
+          }}
+          className="h-6 w-4"
+        >
+          <Trash2 />
         </Button>
       );
     },

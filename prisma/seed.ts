@@ -4,10 +4,12 @@ const prisma = new PrismaClient();
 
 async function main() {
   // テストユーザーの作成
-  const user = await prisma.user.create({
-    data: {
-      email: "test1@example.com",
-      name: "テストユーザー",
+  const user = await prisma.user.upsert({
+    where: { email: "test@example.com" },
+    update: {},
+    create: {
+      email: "test@example.com",
+      name: "Test User",
     },
   });
 
@@ -27,46 +29,42 @@ async function main() {
     }),
     prisma.category.create({
       data: {
-        name: "技術",
+        name: "エンジニアリング",
         userId: user.id,
       },
     }),
   ]);
 
-  // プロンプトの作成とカテゴリーの関連付け
+  // Twitterアカウントの作成
+  const twitterAccount = await prisma.twitterAccount.create({
+    data: {
+      name: "テストアカウント",
+      twitterHandle: "@test_handle",
+      userId: user.id,
+    },
+  });
+
+  // プロンプトの作成
   const prompts = await Promise.all([
     prisma.prompt.create({
       data: {
-        title: "ビジネスアイデア生成",
+        title: "新商品の告知",
         content:
-          "新しいビジネスアイデアを5つ提案してください。各アイデアには、ターゲット顧客、価値提案、収益モデルを含めてください。",
-        isTemplate: true,
-        userId: user.id,
-        categories: {
-          create: [{ category: { connect: { id: categories[0].id } } }],
-        },
-      },
-    }),
-    prisma.prompt.create({
-      data: {
-        title: "SNSマーケティング戦略",
-        content:
-          "以下の製品のSNSマーケティング戦略を立案してください：[製品名]。ターゲット層、投稿内容、投稿頻度、使用するハッシュタグを含めてください。",
+          "新商品「{product_name}」が発売されました！特徴は{features}です。ぜひチェックしてください！",
         isTemplate: true,
         userId: user.id,
         categories: {
           create: [
-            { category: { connect: { id: categories[1].id } } },
             { category: { connect: { id: categories[0].id } } },
+            { category: { connect: { id: categories[1].id } } },
           ],
         },
       },
     }),
     prisma.prompt.create({
       data: {
-        title: "技術トレンド分析",
-        content:
-          "現在のテクノロジー業界における重要なトレンドを分析し、今後6ヶ月間の予測を行ってください。",
+        title: "技術情報の共有",
+        content: "{technology}について解説します。主な特徴は{features}です。",
         isTemplate: true,
         userId: user.id,
         categories: {
@@ -76,44 +74,36 @@ async function main() {
     }),
   ]);
 
-  // Twitterアカウントの作成
-  const twitterAccount = await prisma.twitterAccount.create({
-    data: {
-      name: "テストアカウント",
-      twitterHandle: "test_handle",
-      userId: user.id,
-    },
-  });
-
   // タスクの作成
-  const task = await prisma.task.create({
-    data: {
-      taskType: "TWEET",
-      promptId: prompts[0].id,
-      twitterAccountId: twitterAccount.id,
-      compiledPrompt: "今日は晴れて気持ちの良い一日でした。",
-    },
-  });
-
-  // ツイートの作成
-  await prisma.twitterPost.create({
-    data: {
-      tweetContent: "今日は晴れて気持ちの良い一日でした。#天気 #今日の天気",
-      taskId: task.id,
-      twitterAccountId: twitterAccount.id,
-      postedAt: new Date(),
-    },
-  });
-
-  console.log("シードデータが正常に作成されました");
+  await Promise.all([
+    prisma.task.create({
+      data: {
+        taskType: "TWEET",
+        promptId: prompts[0].id,
+        twitterAccountId: twitterAccount.id,
+        compiledPrompt:
+          "新商品「AI Assistant」が発売されました！特徴は高性能な自然言語処理です。ぜひチェックしてください！",
+      },
+    }),
+    prisma.task.create({
+      data: {
+        taskType: "SCHEDULE",
+        promptId: prompts[1].id,
+        twitterAccountId: twitterAccount.id,
+        compiledPrompt:
+          "TypeScriptについて解説します。主な特徴は型安全性とツール支援の充実です。",
+        cronSchedule: "0 9 * * *", // 毎日午前9時
+      },
+    }),
+  ]);
 }
 
 main()
   .then(async () => {
     await prisma.$disconnect();
-    process.exit(0);
   })
   .catch(async (e) => {
     console.error(e);
     await prisma.$disconnect();
+    process.exit(1);
   });
