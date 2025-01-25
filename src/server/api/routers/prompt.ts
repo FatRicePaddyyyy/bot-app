@@ -1,7 +1,14 @@
+import { z } from "zod";
+
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { updateIsFavoriteInput } from "~/server/types";
+import {
+  deletePromptInput,
+  promptCreationSchema,
+  updateIsFavoriteInput,
+} from "~/server/types";
 
 export const promptRouter = createTRPCRouter({
+  // 時間でそーと
   all: protectedProcedure.query(async ({ ctx }) => {
     // プロンプトとそれに関連するカテゴリを取得
     const prompts = await ctx.db.prompt.findMany({
@@ -20,6 +27,9 @@ export const promptRouter = createTRPCRouter({
       where: {
         userId: ctx.session.user.id,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
     return prompts;
   }),
@@ -31,5 +41,79 @@ export const promptRouter = createTRPCRouter({
         data: { isFavorite: input.isFavorite },
       });
       return { success: true };
+    }),
+  create: protectedProcedure
+    .input(promptCreationSchema)
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.prompt.create({
+        data: {
+          title: input.title,
+          content: input.content,
+          userId: ctx.session.user.id,
+          categories: {
+            create: input.categories.map((categoryId) => ({
+              category: {
+                connect: {
+                  id: categoryId,
+                },
+              },
+            })),
+          },
+        },
+      });
+      return { success: true };
+    }),
+  delete: protectedProcedure
+    .input(deletePromptInput)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.db.$transaction(async (tx) => {
+          // 先にPromptCategoryの関連レコードを削除
+          await tx.promptCategory.deleteMany({
+            where: {
+              promptId: input.id,
+            },
+          });
+
+          // TwitterPostのTaskとの関連を解除
+          const posts = await tx.twitterPost.findMany({
+            where: {
+              task: {
+                promptId: input.id,
+              },
+            },
+          });
+
+          for (const post of posts) {
+            await tx.twitterPost.update({
+              where: { id: post.id },
+              data: {
+                task: {
+                  connect: undefined,
+                },
+              },
+            });
+          }
+
+          // 関連するTaskを削除
+          await tx.task.deleteMany({
+            where: {
+              promptId: input.id,
+            },
+          });
+
+          // 最後にPromptを削除
+          await tx.prompt.delete({
+            where: {
+              id: input.id,
+              userId: ctx.session.user.id,
+            },
+          });
+        });
+        return { success: true };
+      } catch (error) {
+        console.error("Failed to delete prompt:", error);
+        throw error;
+      }
     }),
 });
