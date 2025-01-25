@@ -64,12 +64,18 @@ export const promptRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(deletePromptInput)
     .mutation(async ({ ctx, input }) => {
+      if (input.id < 0) {
+        console.log("プロンプトIDとして負の値が渡されました。");
+      }
       try {
         await ctx.db.$transaction(async (tx) => {
           // 先にPromptCategoryの関連レコードを削除
           await tx.promptCategory.deleteMany({
             where: {
               promptId: input.id,
+              prompt: {
+                userId: ctx.session.user.id
+              }
             },
           });
 

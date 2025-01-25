@@ -37,6 +37,7 @@ export function DataTable() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [data] = api.prompt.all.useSuspenseQuery();
+  
   const table = useReactTable({
     data,
     columns,
