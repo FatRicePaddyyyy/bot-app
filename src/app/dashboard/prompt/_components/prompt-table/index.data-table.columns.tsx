@@ -8,7 +8,7 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { type Prompt } from "~/server/types";
 import { api } from "~/trpc/react";
-import { DataTableColumnHeader } from "./data-table-column-header";
+import { DataTableColumnHeader } from "./index.data-table.columns.header";
 
 export const columns: ColumnDef<Prompt>[] = [
   {

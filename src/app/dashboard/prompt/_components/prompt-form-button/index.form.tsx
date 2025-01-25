@@ -9,17 +9,17 @@ import { Button } from "~/components/ui/button";
 import { Form } from "~/components/ui/form";
 import { promptCreationSchema } from "~/server/types";
 import { api } from "~/trpc/react";
-import { CategoriesFormItem } from "./categories-form-item";
-import { ContentFormItem } from "./content-form-item";
-import { IsTemplateFormItem } from "./isTemplate-form-item";
-import { TitleFormItem } from "./title-form-item";
+import { CategoriesFormItem } from "./index.form.categories";
+import { ContentFormItem } from "./index.form.content";
+import { IsTemplateFormItem } from "./index.form.isTemplate";
+import { TitleFormItem } from "./index.form.title";
 
 export default function PromptForm({
   initialPrompt,
-  onClose,
+  onCloseAction,
 }: {
   initialPrompt: z.infer<typeof promptCreationSchema> | undefined;
-  onClose: () => void;
+  onCloseAction: () => void;
 }) {
   const [allCategories] = api.category.all.useSuspenseQuery();
   const utils = api.useUtils();
@@ -76,7 +76,7 @@ export default function PromptForm({
 
   const onSubmit = (prompt: z.infer<typeof promptCreationSchema>) => {
     mutate(prompt);
-    onClose();
+    onCloseAction();
   };
 
   return (
@@ -93,7 +93,7 @@ export default function PromptForm({
             <IsTemplateFormItem promptForm={promptForm} />
           </div>
           <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onCloseAction}>
               キャンセル
             </Button>
             <Button type="submit">作成</Button>

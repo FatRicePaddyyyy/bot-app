@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
-import { NavMain } from "~/components/nav-main";
-import { NavProjects } from "~/components/nav-projects";
+import { NavMain } from "~/components/sidebar/index.main";
+import { NavProjects } from "~/components/sidebar/index.projects";
 import {
   Sidebar,
   SidebarContent,
@@ -23,7 +23,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "~/components/ui/sidebar";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 // This is sample data.
 const data = {

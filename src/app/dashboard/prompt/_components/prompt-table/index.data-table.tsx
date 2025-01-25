@@ -27,9 +27,9 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { api } from "~/trpc/react";
-import { columns } from "./columns";
-import { DataTablePagination } from "./data-table-pagination";
-import { DataTableToolbar } from "./data-table-toolbar";
+import { columns } from "./index.data-table.columns";
+import { DataTablePagination } from "./index.data-table.pagination";
+import { DataTableToolbar } from "./index.data-table.toolbar";
 
 export function DataTable() {
   const [rowSelection, setRowSelection] = useState({});

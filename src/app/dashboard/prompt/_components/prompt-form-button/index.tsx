@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import PromptForm from "./prompt-form";
+import PromptForm from "./index.form";
 
 export default function CreatePromptButton() {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,7 +29,7 @@ export default function CreatePromptButton() {
         </DialogHeader>
         <PromptForm
           initialPrompt={undefined}
-          onClose={() => setIsOpen(false)}
+          onCloseAction={() => setIsOpen(false)}
         />
       </DialogContent>
     </Dialog>

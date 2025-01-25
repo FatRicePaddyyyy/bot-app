@@ -6,8 +6,8 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
-import AuthGitHubButton from "./AuthGitHubButton";
-import AuthGoogleButton from "./AuthGoogleButton";
+import AuthGitHubButton from "./index.AuthGitHubButton";
+import AuthGoogleButton from "./index.AuthGoogleButton";
 
 export default function LoginForm({
   className,
