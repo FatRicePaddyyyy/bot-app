@@ -5,9 +5,11 @@ import type { AppRouter } from "~/server/api/root";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
+// プロンプトの出力の型
 type allPromptOutput = RouterOutput["prompt"]["all"];
 export type Prompt = allPromptOutput[number];
 
+// カテゴリーの出力の型
 type allCategoryOutput = RouterOutput["category"]["all"];
 export type Category = allCategoryOutput[number];
 
@@ -66,3 +68,10 @@ export const categoryCreationSchema = z.object({
 export const deletePromptInput = z.object({
   id: z.number(),
 });
+
+export const apiSettingInput = z.object({
+  key: z.enum(["GEMINI_API_KEY", "OPENAI_API_KEY"]),
+  value: z.string(),
+});
+
+export type ApiKeyType = "GEMINI_API_KEY" | "OPENAI_API_KEY" | undefined;
