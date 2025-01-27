@@ -93,8 +93,8 @@ const data = {
       icon: Map,
     },
     {
-      name: "apiの設定",
-      url: "#",
+      name: "APIの設定",
+      url: "/dashboard/api-setting",
       icon: Map,
     },
   ],

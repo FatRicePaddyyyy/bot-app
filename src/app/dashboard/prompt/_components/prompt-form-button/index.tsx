@@ -23,7 +23,10 @@ export default function CreatePromptButton() {
           プロンプト作成
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]" onInteractOutside={() => setIsOpen(false)}>
+      <DialogContent
+        className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]"
+        onInteractOutside={() => setIsOpen(false)}
+      >
         <DialogHeader>
           <DialogTitle>プロンプト作成</DialogTitle>
         </DialogHeader>

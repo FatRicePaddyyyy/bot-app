@@ -188,7 +188,9 @@ export const columns: ColumnDef<Prompt>[] = [
           return { previousPrompts };
         },
         onError: (err, id, context) => {
-          toast.error(`プロンプトの削除に失敗しました。時間をおいて再度お試しください。`);
+          toast.error(
+            `プロンプトの削除に失敗しました。時間をおいて再度お試しください。`,
+          );
           console.error(err);
           if (!context) return;
           utils.prompt.all.setData(undefined, () => context.previousPrompts);
