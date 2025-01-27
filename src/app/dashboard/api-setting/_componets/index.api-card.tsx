@@ -9,17 +9,21 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { type ApiKeyType } from "~/server/types";
+import { GeminiButton } from "./index.api-card.gemini-button";
+import { OpenAiButton } from "./index.api-card.openai-button";
 
 export const ApiCard = ({
   type,
   duration,
   delay,
-  button,
+  setSelectedApiType,
+  setOpen,
 }: {
   type: ApiKeyType;
   duration: number;
   delay: number;
-  button: React.ReactNode;
+  setSelectedApiType: (type: ApiKeyType) => void;
+  setOpen: (open: boolean) => void;
 }) => {
   const title = type === "OPENAI_API_KEY" ? "OpenAI API" : "Gemini API";
   const description =
@@ -35,7 +39,13 @@ export const ApiCard = ({
       <Card className="group transition-shadow duration-300 hover:shadow-lg">
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-between">
-            <CardTitle className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-2xl text-transparent">
+            <CardTitle
+              className={`${
+                type === "GEMINI_API_KEY"
+                  ? "bg-gradient-to-r from-blue-600 to-cyan-600"
+                  : "bg-gradient-to-r from-green-600 to-emerald-600"
+              } bg-clip-text text-2xl text-transparent`}
+            >
               {title}
             </CardTitle>
           </div>
@@ -43,7 +53,17 @@ export const ApiCard = ({
         </CardHeader>
         <CardContent className="flex justify-end">
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            {button}
+            {type === "OPENAI_API_KEY" ? (
+              <OpenAiButton
+                setSelectedApiType={setSelectedApiType}
+                setOpen={setOpen}
+              />
+            ) : (
+              <GeminiButton
+                setSelectedApiType={setSelectedApiType}
+                setOpen={setOpen}
+              />
+            )}
           </motion.div>
         </CardContent>
       </Card>

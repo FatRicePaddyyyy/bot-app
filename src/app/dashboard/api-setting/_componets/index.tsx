@@ -3,10 +3,8 @@
 import { useState } from "react";
 
 import { type ApiKeyType } from "~/server/types";
-import { ApiCard } from "./index.apiCard";
+import { ApiCard } from "./index.api-card";
 import { ApiSettingDialog } from "./index.dailog";
-import { GeminiButton } from "./index.geminiButton";
-import { OpenAiButton } from "./index.openaiButton";
 
 export function ApiSettingForm() {
   const [open, setOpen] = useState(false);
@@ -20,23 +18,15 @@ export function ApiSettingForm() {
           type="OPENAI_API_KEY"
           duration={0.4}
           delay={0}
-          button={
-            <OpenAiButton
-              setSelectedApiType={setSelectedApiType}
-              setOpen={setOpen}
-            />
-          }
+          setSelectedApiType={setSelectedApiType}
+          setOpen={setOpen}
         />
         <ApiCard
           type="GEMINI_API_KEY"
           duration={0.4}
           delay={0.2}
-          button={
-            <GeminiButton
-              setSelectedApiType={setSelectedApiType}
-              setOpen={setOpen}
-            />
-          }
+          setSelectedApiType={setSelectedApiType}
+          setOpen={setOpen}
         />
       </div>
       <ApiSettingDialog
