@@ -3,7 +3,7 @@ import { createTwitterAccountInput } from "~/server/types";
 
 export const twitterAccountRouter = createTRPCRouter({
   all: protectedProcedure.query(async ({ ctx }) => {
-    const twitterAccounts = await ctx.db.twitterAccount.findMany({
+    return await ctx.db.twitterAccount.findMany({
       where: {
         userId: ctx.session.user.id,
       },
@@ -11,14 +11,11 @@ export const twitterAccountRouter = createTRPCRouter({
         createdAt: "desc",
       },
       select: {
+        id: true,
         name: true,
         twitterHandle: true,
       },
     });
-    return twitterAccounts.map(({ name, twitterHandle }) => ({
-      name,
-      twitterHandle,
-    }));
   }),
   create: protectedProcedure
     .input(createTwitterAccountInput)

@@ -13,6 +13,10 @@ export type Prompt = allPromptOutput[number];
 type allCategoryOutput = RouterOutput["category"]["all"];
 export type Category = allCategoryOutput[number];
 
+// ツイッターアカウントの出力
+type allTwitterAccountOutput = RouterOutput["twitterAccount"]["all"];
+export type TwitterAccount = allTwitterAccountOutput[number];
+
 export const createTwitterAccountInput = z.object({
   name: z
     .string()

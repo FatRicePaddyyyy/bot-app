@@ -73,23 +73,23 @@ const data = {
   ],
   projects: [
     {
-      name: "単発ツイートの作成",
+      name: "単発ツイート作成",
       url: "/dashboard/tweet",
       icon: Frame,
     },
     {
-      name: "定期ツイートの作成",
+      name: "定期ツイート作成",
       url: "#",
       icon: PieChart,
     },
     {
-      name: "プロンプトの管理",
+      name: "プロンプト管理",
       url: "/dashboard/prompt",
       icon: Map,
     },
     {
-      name: "ツイッターアカウントの設定",
-      url: "#",
+      name: "アカウント設定",
+      url: "/dashboard/twitter-acount",
       icon: Map,
     },
     {
