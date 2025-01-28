@@ -1,7 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
 import type { ApiKeyType } from "~/server/types";
+import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +21,7 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { api } from "~/trpc/react";
-import { Button } from "~/components/ui/button";
+
 export const ApiSettingDialog = ({
   selectedApiType,
   open,
@@ -83,9 +85,7 @@ export const ApiSettingDialog = ({
                 )}
               />
               <div className="flex justify-end gap-4">
-                <Button type="submit">
-                  作成
-                </Button>
+                <Button type="submit">作成</Button>
               </div>
             </div>
           </form>

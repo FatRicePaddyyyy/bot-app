@@ -13,6 +13,10 @@ export type Prompt = allPromptOutput[number];
 type allCategoryOutput = RouterOutput["category"]["all"];
 export type Category = allCategoryOutput[number];
 
+// ツイッターアカウントの出力
+type allTwitterAccountOutput = RouterOutput["twitterAccount"]["all"];
+export type TwitterAccount = allTwitterAccountOutput[number];
+
 export const createTwitterAccountInput = z.object({
   name: z
     .string()
@@ -72,6 +76,10 @@ export const deletePromptInput = z.object({
 export const apiSettingInput = z.object({
   key: z.enum(["GEMINI_API_KEY", "OPENAI_API_KEY"]),
   value: z.string(),
+});
+
+export const deleteTwitterAccountInput = z.object({
+  id: z.number(),
 });
 
 export type ApiKeyType = "GEMINI_API_KEY" | "OPENAI_API_KEY" | undefined;
