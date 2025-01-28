@@ -78,4 +78,8 @@ export const apiSettingInput = z.object({
   value: z.string(),
 });
 
+export const deleteTwitterAccountInput = z.object({
+  id: z.number(),
+});
+
 export type ApiKeyType = "GEMINI_API_KEY" | "OPENAI_API_KEY" | undefined;
