@@ -10,11 +10,7 @@ import { type Prompt } from "~/server/types";
 import { api } from "~/trpc/react";
 import { DataTableColumnHeader } from "./index.data-table.columns.header";
 
-export const columns = ({
-  setModalState,
-}: {
-  setModalState: (state: boolean) => void;
-}): ColumnDef<Prompt>[] => [
+export const columns: ColumnDef<Prompt>[] = [
   {
     accessorKey: "title",
     header: ({ column }) => (
@@ -183,7 +179,6 @@ export const columns = ({
       const utils = api.useUtils();
       const { mutate: deleteMutation } = api.prompt.delete.useMutation({
         onMutate: async ({ id }) => {
-          setModalState(false);
           await utils.prompt.all.cancel();
           const previousPrompts = utils.prompt.all.getData();
           utils.prompt.all.setData(undefined, (prev) => {
