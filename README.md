@@ -20,3 +20,10 @@ export default function AuthGitHubButton() {
 }
 ```
 こんな感じで，formでラップしていた．(実際に直接の子としていたわけではないが)このようにすると，ボタンを押したときに，フォームの処理が走り，認証がされる前にページがリロードされてしまり，認証ができなかった．<form>を消したら動いた．
+
+# limaの導入
+```
+npx @liam-hq/cli init
+npx @liam-hq/cli erd build --input prisma/schema.prisma --format prisma
+npx http-server dist
+```
