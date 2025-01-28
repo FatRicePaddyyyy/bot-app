@@ -27,3 +27,58 @@ npx @liam-hq/cli init
 npx @liam-hq/cli erd build --input prisma/schema.prisma --format prisma
 npx http-server dist
 ```
+
+# プレフェッチについて
+```
+// void api.twitterAccount.all.prefetch(); // レンダリングプロセス中にプレフェッチされる
+```
+このようにコメントアウトすると、以下のようなエラー
+```
+Uncaught Error: Switched to client rendering because the server rendering errored:
+
+UNAUTHORIZED
+    at TRPCClientError.from (file:///Users/ota/Desktop/git-managed/x-bot-app-rev/.next/server/chunks/ssr/node_modules_262ae0._.js:5563:20)
+    at eval (file:///Users/ota/Desktop/git-managed/x-bot-app-rev/.next/server/chunks/ssr/node_modules_262ae0._.js:6461:216)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+```
+これはtrpc.tsで想定しているエラー
+```
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session || !ctx.session.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    });
+  });
+
+```
+どうやら、``` api.twitterAccount.all.useSuspenseQuery()```を実行するときはセッション情報を取得できていないらしい。でもプレフェッチすると、セッション情報を取得できているようだ。画面の挙動としては、エラーが出たあと、データは取得されている。``` Switched to client rendering```とあるから、クライアントコンポーネントにフォールバックし、クライアントではセッション情報を取得できているようだ。サーバーではセッション情報を取得できない?
+あとそもそも、``` `use client` ```をつけているのに、なぜサーバーサイドで取得しようとしている?
+
+プレフェッチを消し、以下のように```api.twitterAccount.all.useQuery()```にするとエラーが消えた。これは、最初からクライアントサイドでしか動かない。
+
+```
+export function TwitterAccountsListPage() {
+  const { data: accounts } = api.twitterAccount.all.useQuery();
+  const [modalState, setModalState] = useState<ModalState>(null);
+  if (!accounts) return <div>Loading...</div>;
+
+  return (
+    <ModalContext.Provider value={{ modalState, setModalState }}>
+      <TwitterAccountsList accounts={accounts} />
+      <TwitterAccountDeleteDialog />
+      <TwitterAccountFormDialog
+        open={modalState?.type === "edit"}
+        setOpen={(open: boolean) => setModalState(open ? modalState : null)}
+        initialAccount={modalState?.account ?? null}
+      />
+    </ModalContext.Provider>
+  );
+}
+```
