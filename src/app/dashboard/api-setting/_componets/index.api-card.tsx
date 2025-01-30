@@ -9,8 +9,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { type ApiKeyType } from "~/server/types";
-import { GeminiButton } from "./index.api-card.gemini-button";
-import { OpenAiButton } from "./index.api-card.openai-button";
+import { AIButton } from "./index.button";
 
 export const ApiCard = ({
   type,
@@ -54,12 +53,14 @@ export const ApiCard = ({
         <CardContent className="flex justify-end">
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             {type === "OPENAI_API_KEY" ? (
-              <OpenAiButton
+              <AIButton
+                variant="openai"
                 setSelectedApiType={setSelectedApiType}
                 setOpen={setOpen}
               />
             ) : (
-              <GeminiButton
+              <AIButton
+                variant="gemini"
                 setSelectedApiType={setSelectedApiType}
                 setOpen={setOpen}
               />
