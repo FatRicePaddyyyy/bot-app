@@ -48,6 +48,7 @@ export const promptRouter = createTRPCRouter({
           title: input.title,
           content: input.content,
           userId: ctx.session.user.id,
+          isTemplate: input.isTemplate,
           categories: {
             create: input.categories.map((categoryId) => ({
               category: {

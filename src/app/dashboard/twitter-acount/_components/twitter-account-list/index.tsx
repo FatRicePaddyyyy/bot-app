@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+
+import type { ModalState } from "./types";
 import { api } from "~/trpc/react";
 import { TwitterAccountFormDialog } from "../twitter-account-form";
-import { type ModalState, ModalContext } from "./types";
-import { TwitterAccountsList } from "./index.account-list";
 import { TwitterAccountDeleteDialog } from "./index.account-delete-dialog";
+import { TwitterAccountsList } from "./index.account-list";
+import { ModalContext } from "./types";
 
 export function TwitterAccountsListPage() {
   const [accounts] = api.twitterAccount.all.useSuspenseQuery();

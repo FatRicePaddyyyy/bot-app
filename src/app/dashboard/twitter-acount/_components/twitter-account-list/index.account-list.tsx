@@ -1,10 +1,15 @@
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Twitter } from "lucide-react";
-import { type TwitterAccount } from "~/server/types";
-import { NoAccount } from "./index.account-list.no-account";
-import { TwitterAccountCard } from "./index.account-list.card";
 
-export function TwitterAccountsList({ accounts }: { accounts: TwitterAccount[] }) {
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { type TwitterAccount } from "~/server/types";
+import { TwitterAccountCard } from "./index.account-list.card";
+import { NoAccount } from "./index.account-list.no-account";
+
+export function TwitterAccountsList({
+  accounts,
+}: {
+  accounts: TwitterAccount[];
+}) {
   return (
     <Card>
       <CardHeader className="border-b">
@@ -28,4 +33,4 @@ export function TwitterAccountsList({ accounts }: { accounts: TwitterAccount[] }
       </CardContent>
     </Card>
   );
-};
+}

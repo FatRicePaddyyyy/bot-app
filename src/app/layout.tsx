@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "~/components/ui/toaster";
 
 import { TRPCReactProvider } from "~/trpc/react";
 

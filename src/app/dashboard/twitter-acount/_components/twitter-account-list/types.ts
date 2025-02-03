@@ -1,5 +1,6 @@
+import { createContext, useContext } from "react";
+
 import { type TwitterAccount } from "~/server/types";
-import { useContext, createContext } from "react";
 
 export type ModalState = {
   type: "delete" | "edit";
@@ -11,7 +12,9 @@ export type ModalContextType = {
   setModalState: (state: ModalState) => void;
 };
 
-export const ModalContext = createContext<ModalContextType | undefined>(undefined);
+export const ModalContext = createContext<ModalContextType | undefined>(
+  undefined,
+);
 
 export function useModalContext() {
   const context = useContext(ModalContext);

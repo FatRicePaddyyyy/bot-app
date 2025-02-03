@@ -78,6 +78,7 @@ export default function PromptForm({
   });
 
   const onSubmit = (prompt: z.infer<typeof promptCreationSchema>) => {
+    console.log(prompt.isTemplate);
     mutate(prompt);
   };
 
