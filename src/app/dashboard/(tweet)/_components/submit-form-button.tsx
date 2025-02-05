@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import { Button } from "~/components/ui/button";
 import { useScheduleForm } from "./schedule-form";
 
@@ -7,11 +8,7 @@ const SubmitFormButton = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   return (
     <>
-  <Button
-    type="submit"
-      >
-        保存
-      </Button>
+      <Button type="submit">保存</Button>
     </>
   );
 };

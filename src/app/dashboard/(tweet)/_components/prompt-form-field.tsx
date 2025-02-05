@@ -1,6 +1,8 @@
+import type { UseFormReturn } from "react-hook-form";
 import React from "react";
 import { ChevronsUpDown, FileCode, FileText } from "lucide-react";
 
+import type { Prompt, ScheduleTask } from "~/server/types";
 import { Button } from "~/components/ui/button";
 import { Command, CommandGroup } from "~/components/ui/command";
 import {
@@ -18,17 +20,24 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
-import { useScheduleForm } from "./schedule-form";
 
-const PromptFormField = () => {
-  const {
-    form,
-    promptDialogOpen,
-    setPromptDialogOpen,
-    selectedPrompt,
-    prompts,
-    handlePromptSelect,
-  } = useScheduleForm();
+type Props = {
+  form: UseFormReturn<ScheduleTask>;
+  promptDialogOpen: boolean;
+  setPromptDialogOpen: (open: boolean) => void;
+  selectedPrompt: Prompt | null;
+  prompts: Prompt[];
+  handlePromptSelect: ({ promptId }: { promptId: number }) => void;
+};
+
+const PromptFormField = ({
+  form,
+  promptDialogOpen,
+  setPromptDialogOpen,
+  selectedPrompt,
+  prompts,
+  handlePromptSelect,
+}: Props) => {
   return (
     <FormField
       control={form.control}

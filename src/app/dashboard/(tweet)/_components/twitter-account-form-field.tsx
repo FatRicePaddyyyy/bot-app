@@ -1,5 +1,7 @@
+import type { UseFormReturn } from "react-hook-form";
 import React from "react";
 
+import type { ScheduleTask, TwitterAccount } from "~/server/types";
 import {
   FormControl,
   FormField,
@@ -14,11 +16,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { useScheduleForm } from "./schedule-form";
 
-const TwitterAccountFormField = () => {
-  const { form, selectedTwitterAccount, twitterAccounts, setSelectedTwitterAccount } =
-    useScheduleForm();
+type Props = {
+  form: UseFormReturn<ScheduleTask>;
+  twitterAccounts: TwitterAccount[];
+  setSelectedTwitterAccount: (account: TwitterAccount | null) => void;
+};
+
+const TwitterAccountFormField = ({
+  form,
+  twitterAccounts,
+  setSelectedTwitterAccount,
+}: Props) => {
   return (
     <FormField
       control={form.control}

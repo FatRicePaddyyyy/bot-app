@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { type z } from "zod";
 
@@ -12,6 +13,8 @@ import type {
   TwitterAccount,
 } from "~/server/types";
 import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Textarea } from "~/components/ui/textarea";
 import { useToast } from "~/hooks/use-toast";
 import { taskFormSchema } from "~/server/types";
 import { api } from "~/trpc/react";
@@ -19,7 +22,6 @@ import { parseCronToSchedule } from "~/utils/cron";
 import AiProviderForm from "../ai-provider-form";
 import CompiledPrompt from "../compiled-prompt";
 import PromptFormField from "../prompt-form-field";
-import ScheduleFieldForm from "../schedule-field-form";
 import TemplateVariablesDialog from "../template-variables-dialog";
 import TwitterAccountFormField from "../twitter-account-form-field";
 
@@ -79,7 +81,20 @@ const ScheduleForm = ({
   >([]);
   const [showTemplateDialog, setShowTemplateDialog] = useState(false);
   const [promptDialogOpen, setPromptDialogOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedContent, setGeneratedContent] = useState<string | null>(null);
   const utils = api.useUtils();
+
+  const generateContent = async ({
+    compiledPrompt,
+  }: {
+    compiledPrompt: string;
+  }) => {
+    setIsGenerating(true);
+
+    setGeneratedContent(compiledPrompt);
+    setIsGenerating(false);
+  };
 
   const { mutate: createTask } = api.task.create.useMutation({
     onSuccess: async () => {
@@ -167,6 +182,8 @@ const ScheduleForm = ({
             setShowTemplateDialog(true);
           }
         }
+      } else {
+        setCompiledPrompt(prompt.content);
       }
     } catch (error) {
       console.error("Error fetching prompt:", error);
@@ -192,27 +209,6 @@ const ScheduleForm = ({
     });
     setCompiledPrompt(compiled);
     setShowTemplateDialog(false);
-  };
-
-  const formProps = {
-    form,
-    prompts,
-    twitterAccounts,
-    selectedPrompt,
-    selectedTwitterAccount,
-    compiledPrompt,
-    templateVariables,
-    showTemplateDialog,
-    promptDialogOpen,
-    setPromptDialogOpen,
-    setSelectedPrompt,
-    setCompiledPrompt,
-    setSelectedTwitterAccount,
-    setTemplateVariables,
-    setShowTemplateDialog,
-    handlePromptSelect,
-    handleTemplateVariablesSubmit,
-    onSubmit,
   };
 
   return (
@@ -274,9 +270,66 @@ const ScheduleForm = ({
               twitterAccounts={twitterAccounts}
               setSelectedTwitterAccount={setSelectedTwitterAccount}
             />
-            <ScheduleFieldForm form={form} />
             <AiProviderForm form={form} />
 
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                onClick={async () => {
+                  console.log(compiledPrompt);
+                  if (compiledPrompt) {
+                    await generateContent({ compiledPrompt });
+                  }
+                }}
+                disabled={
+                  isGenerating || !selectedPrompt || !selectedTwitterAccount
+                }
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    生成中...
+                  </>
+                ) : generatedContent ? (
+                  "再生成"
+                ) : (
+                  "生成"
+                )}
+              </Button>
+            </div>
+            {generatedContent && (
+              <Card className="mt-4">
+                <CardHeader>
+                  <CardTitle>生成されたコンテンツ</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="relative">
+                    <Textarea
+                      value={generatedContent ?? ""}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        setGeneratedContent(e.target.value)
+                      }
+                      rows={10}
+                      maxLength={140}
+                      className={`min-h-[200px] ${
+                        generatedContent.length > 140
+                          ? "border-red-500 focus:border-red-500"
+                          : ""
+                      }`}
+                    />
+                    <div
+                      className={`absolute bottom-2 right-2 text-sm ${
+                        generatedContent.length > 140
+                          ? "text-red-500"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {generatedContent.length} / 140
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
             <div className="flex justify-end">
               <Button type="submit">保存</Button>
             </div>

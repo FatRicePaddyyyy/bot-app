@@ -1,5 +1,7 @@
+import type { UseFormReturn } from "react-hook-form";
 import React from "react";
 
+import type { ScheduleTask } from "~/server/types";
 import {
   FormControl,
   FormField,
@@ -14,10 +16,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { useScheduleForm } from "./schedule-form";
 
-const AiProviderForm = () => {
-  const { form } = useScheduleForm();
+type Props = {
+  form: UseFormReturn<ScheduleTask>;
+};
+
+const AiProviderForm = ({ form }: Props) => {
   return (
     <FormField
       control={form.control}

@@ -105,6 +105,11 @@ export const taskFormSchema = z.object({
   isDraft: z.boolean(),
 });
 
+export const tweetInputSchema = taskFormSchema.extend({
+  editedContent: z.string(),
+  compiledPrompt: z.string(),
+});
+
 export type Schedule = z.infer<typeof taskFormSchema>["schedule"];
 export type ScheduleTask = z.infer<typeof taskFormSchema>;
 

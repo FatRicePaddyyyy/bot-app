@@ -6,6 +6,7 @@ import {
   DialogPortal,
 } from "@radix-ui/react-dialog";
 
+import type { TemplateVariable } from "~/server/types";
 import { Button } from "~/components/ui/button";
 import {
   DialogDescription,
@@ -15,16 +16,24 @@ import {
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { toast } from "~/hooks/use-toast";
-import { type TemplateVariable } from "~/server/types";
-import { useScheduleForm } from "./schedule-form";
 
-export default function TemplateVariablesDialog() {
-  const {
-    showTemplateDialog,
-    setShowTemplateDialog,
-    templateVariables,
-    handleTemplateVariablesSubmit,
-  } = useScheduleForm();
+type Props = {
+  showTemplateDialog: boolean;
+  setShowTemplateDialog: (show: boolean) => void;
+  templateVariables: TemplateVariable[];
+  handleTemplateVariablesSubmit: ({
+    variables,
+  }: {
+    variables: TemplateVariable[];
+  }) => void;
+};
+
+export default function TemplateVariablesDialog({
+  showTemplateDialog,
+  setShowTemplateDialog,
+  templateVariables,
+  handleTemplateVariablesSubmit,
+}: Props) {
   const [tempVariables, setTempVariables] =
     useState<TemplateVariable[]>(templateVariables);
 

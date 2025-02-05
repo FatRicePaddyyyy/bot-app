@@ -1,10 +1,9 @@
 import { Suspense } from "react";
 
 import { api, HydrateClient } from "~/trpc/server";
-import ScheduleForm from "../_components/schedule-form";
-import ScheduleSkeleton from "../_components/schedule-skeleton";
+import TweetForm from "../_components/tweet-form";
 
-const SchedulePage = async () => {
+const TweetPage = async () => {
   // Promisで並行に取得
   void api.prompt.all.prefetch();
   void api.twitterAccount.all.prefetch();
@@ -12,12 +11,12 @@ const SchedulePage = async () => {
   return (
     <HydrateClient>
       <div className="container mx-auto my-8 max-w-5xl">
-        <Suspense fallback={<ScheduleSkeleton />}>
-          <ScheduleForm defaultPromptId={undefined} initialTask={undefined} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <TweetForm defaultPromptId={undefined} initialTask={undefined} />
         </Suspense>
       </div>
     </HydrateClient>
   );
 };
 
-export default SchedulePage;
+export default TweetPage;

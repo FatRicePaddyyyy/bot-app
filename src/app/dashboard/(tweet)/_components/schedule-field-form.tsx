@@ -1,5 +1,7 @@
+import type { UseFormReturn } from "react-hook-form";
 import React from "react";
 
+import type { ScheduleTask } from "~/server/types";
 import { Button } from "~/components/ui/button";
 import {
   FormControl,
@@ -17,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { useScheduleForm } from "./schedule-form";
 
 const DAYS_OF_WEEK = [
   { value: 0, label: "日曜日" },
@@ -29,8 +30,11 @@ const DAYS_OF_WEEK = [
   { value: 6, label: "土曜日" },
 ] as const;
 
-export const ScheduleFieldForm = () => {
-  const { form } = useScheduleForm();
+type Props = {
+  form: UseFormReturn<ScheduleTask>;
+};
+
+export const ScheduleFieldForm = ({ form }: Props) => {
   return (
     <div className="space-y-8">
       <FormField

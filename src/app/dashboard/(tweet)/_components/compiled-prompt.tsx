@@ -1,16 +1,22 @@
 import React from "react";
 
+import type { Prompt, TemplateVariable } from "~/server/types";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
-import { useScheduleForm } from "./schedule-form";
 
-const CompiledPrompt = () => {
-  const {
-    selectedPrompt,
-    compiledPrompt,
-    templateVariables,
-    setShowTemplateDialog,
-  } = useScheduleForm();
+type Props = {
+  selectedPrompt: Prompt | null;
+  compiledPrompt: string | null;
+  templateVariables: TemplateVariable[];
+  setShowTemplateDialog: (show: boolean) => void;
+};
+
+const CompiledPrompt = ({
+  selectedPrompt,
+  compiledPrompt,
+  templateVariables,
+  setShowTemplateDialog,
+}: Props) => {
   return (
     selectedPrompt && (
       <div className="space-y-2">
