@@ -1,3 +1,14 @@
+# xのbotを作成するアプリです。
+T3 stack とsupabaseを用いています。
+
+
+
+
+
+
+
+
+
 # 認証がうまくいかない
 ```
 export default function AuthGitHubButton() {
