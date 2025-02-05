@@ -32,7 +32,7 @@ export const AIButton = ({
       className={cn(
         gradientVariants[variant],
         "text-white hover:opacity-90",
-        className
+        className,
       )}
     >
       <Settings className="mr-2 h-4 w-4" />

@@ -1,5 +1,3 @@
-import { useModalContext } from "./types";
-import { api } from "~/trpc/react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,6 +8,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
+import { api } from "~/trpc/react";
+import { useModalContext } from "./types";
 
 export function TwitterAccountDeleteDialog() {
   const { modalState, setModalState } = useModalContext();

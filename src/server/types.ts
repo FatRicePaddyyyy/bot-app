@@ -82,4 +82,40 @@ export const deleteTwitterAccountInput = z.object({
   id: z.number(),
 });
 
+export const taskFormSchema = z.object({
+  promptId: z.number({
+    required_error: "プロンプトを選択してください",
+  }),
+  twitterAccountId: z.number({
+    required_error: "Twitterアカウントを選択してください",
+  }),
+  isScheduled: z.boolean(),
+  cron_schedule: z.string().optional(),
+  schedule: z
+    .object({
+      type: z.enum(["MINUTES", "DAILY", "WEEKLY"]),
+      minutes: z.number().optional(),
+      timeOfDay: z.string().optional(), // HH:mm形式
+      daysOfWeek: z.array(z.number()).optional(), // 0-6 (日-土)の配列
+    })
+    .nullable(),
+  aiProvider: z.string(),
+  taskType: z.enum(["TWEET", "SCHEDULE"]),
+  isActive: z.boolean(),
+  isDraft: z.boolean(),
+});
+
+export const tweetInputSchema = taskFormSchema.extend({
+  editedContent: z.string(),
+  compiledPrompt: z.string(),
+});
+
+export type Schedule = z.infer<typeof taskFormSchema>["schedule"];
+export type ScheduleTask = z.infer<typeof taskFormSchema>;
+
 export type ApiKeyType = "GEMINI_API_KEY" | "OPENAI_API_KEY" | undefined;
+
+export type TemplateVariable = {
+  name: string;
+  value: string;
+};

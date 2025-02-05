@@ -79,7 +79,7 @@ const data = {
     },
     {
       name: "定期ツイート作成",
-      url: "#",
+      url: "/dashboard/schedule",
       icon: PieChart,
     },
     {
