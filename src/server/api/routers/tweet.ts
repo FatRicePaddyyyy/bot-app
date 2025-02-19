@@ -2,26 +2,13 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
   tweetInputSchema,
 } from "~/server/types";
-import { TwitterApi } from "twitter-api-v2";
+import TwitterApi from 'twitter-api-v2';
 
 export const tweetRouter = createTRPCRouter({
   create: protectedProcedure
     .input(tweetInputSchema)
     .mutation(async ({ ctx, input }) => {
       return ctx.db.$transaction(async (tx) => {
-        // タスクを作成
-        const task = await tx.task.create({
-          data: {
-            promptId: input.promptId,
-            twitterAccountId: input.twitterAccountId,
-            taskType: "TWEET",
-            aiProvider: input.aiProvider,
-            isActive: input.isActive,
-            isDraft: input.isDraft,
-            editedContent: input.editedContent,
-            compiledPrompt: input.compiledPrompt,
-          },
-        });
 
         const twitterAccount = await tx.twitterAccount.findUnique({
           where: {
@@ -36,15 +23,34 @@ export const tweetRouter = createTRPCRouter({
           console.log(twitterAccount.twitterAccessToken);
           throw new Error("Twitterアカウントの認証に失敗しました");
         }
+        const appKey : string = twitterAccount.twitterApiKey ?? "";
+        const appSecret : string = twitterAccount.twitterApiSecretKey ?? "";
+        const accessToken : string = twitterAccount.twitterAccessToken ?? "";
+        const accessSecret : string = twitterAccount.twitterAccessTokenSecret ?? "";
 
-        const client = new TwitterApi(twitterAccount.twitterAccessToken);
-        await client.v2.tweet('Hello, this is a test.');
+        const userClient = new TwitterApi({
+          appKey: appKey,
+          appSecret: appSecret,
+          accessToken: accessToken,
+          accessSecret: accessSecret,
+        });
+
+        try {
+          await userClient.v2.me();
+        } catch (verificationError) {
+          console.error('Twitter APIクライアントの検証に失敗:', verificationError);
+        }
+
+        const result = await userClient.v2.tweet(input.editedContent);
+
+        if(result.errors){
+          throw new Error("ツイートに失敗しました");
+        }
 
         // TwitterPostを作成
         await tx.twitterPost.create({
           data: {
             tweetContent: input.editedContent,  // 編集済みの内容を設定
-            taskId: task.id,
             twitterAccountId: input.twitterAccountId,
           },
         });

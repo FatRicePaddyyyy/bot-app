@@ -4,7 +4,7 @@ import { twitterAccountRouter } from "~/server/api/routers/twitter-account";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { aiApiSettingsRouter } from "./routers/settings";
 import { taskRouter } from "./routers/task";
-
+import { tweetRouter } from "./routers/tweet";
 /**
  * This is the primary router for your server.
  *
@@ -16,6 +16,7 @@ export const appRouter = createTRPCRouter({
   category: categoryRouter,
   aiApiSettings: aiApiSettingsRouter,
   task: taskRouter,
+  tweet: tweetRouter,
 });
 
 // export type definition of API

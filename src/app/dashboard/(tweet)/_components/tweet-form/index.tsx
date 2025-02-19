@@ -84,15 +84,28 @@ const ScheduleForm = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<string | null>(null);
   const utils = api.useUtils();
+  const { mutate: createTweet } = api.tweet.create.useMutation({
+    onSuccess: () => {
+      toast({
+        title: "ツイート作成しました",
+      });
+    },
+  });
 
   const generateContent = async ({
     compiledPrompt,
+    twitterAccountId,
   }: {
     compiledPrompt: string;
+    twitterAccountId: number;
   }) => {
     setIsGenerating(true);
 
     setGeneratedContent(compiledPrompt);
+    createTweet({
+      twitterAccountId: twitterAccountId,
+      editedContent: compiledPrompt,
+    });
     setIsGenerating(false);
   };
 
@@ -147,8 +160,10 @@ const ScheduleForm = ({
   });
 
   const onSubmit = async (data: z.infer<typeof taskFormSchema>) => {
-    console.log(data);
-    createTask(data);
+    createTweet({
+      twitterAccountId: data.twitterAccountId,
+      editedContent: compiledPrompt ?? "",
+    });
     // フォームをリセット
   };
 
@@ -278,7 +293,10 @@ const ScheduleForm = ({
                 onClick={async () => {
                   console.log(compiledPrompt);
                   if (compiledPrompt) {
-                    await generateContent({ compiledPrompt });
+                    await generateContent({
+                      compiledPrompt,
+                      twitterAccountId: selectedTwitterAccount?.id ?? 0,
+                    });
                   }
                 }}
                 disabled={
