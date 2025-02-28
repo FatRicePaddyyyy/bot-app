@@ -16,7 +16,7 @@ export const appRouter = createTRPCRouter({
   category: categoryRouter,
   aiApiSettings: aiApiSettingsRouter,
   task: taskRouter,
-  // tweet: tweetRouter,
+  tweet: tweetRouter,
 });
 
 // export type definition of API

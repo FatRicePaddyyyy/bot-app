@@ -90,6 +90,14 @@ const ScheduleForm = ({
         title: "ツイート作成しました",
       });
     },
+    onError: (error) => {
+      console.error("ツイート作成エラー:", error);
+      toast({
+        title: "エラーが発生しました",
+        description: error.message || "ツイートの作成に失敗しました",
+        variant: "destructive",
+      });
+    },
   });
 
   const generateContent = async ({
@@ -102,10 +110,10 @@ const ScheduleForm = ({
     setIsGenerating(true);
 
     setGeneratedContent(compiledPrompt);
-    createTweet({
-      twitterAccountId: twitterAccountId,
-      editedContent: compiledPrompt,
-    });
+    // createTweet({
+    //   twitterAccountId: twitterAccountId,
+    //   editedContent: compiledPrompt,
+    // });
     setIsGenerating(false);
   };
 
